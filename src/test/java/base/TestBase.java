@@ -24,6 +24,8 @@ public class TestBase {
     @Parameters({"hostUrl", "timeout"})
     @BeforeClass
     public void setUp(String hostUrl, int timeout) {
+        // Overcome issue: https://www.selenium.dev/blog/2022/using-java11-httpclient/
+        System.setProperty("webdriver.http.factory", "jdk-http-client");
 
         // Set chrome as default driver
         String browser = System.getProperty("browser", "chrome");

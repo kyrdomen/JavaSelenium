@@ -1,6 +1,7 @@
 package businessObjects;
 
 import dtos.Travel;
+import enums.TravelKind;
 import pageObjects.HomePagePO;
 import pageObjects.TravelFilterPO;
 import validator.Validator;
@@ -13,14 +14,15 @@ public class TravelBO extends Validator {
 
     /**
      * Search for travel
+     *
      * @param travel
-     * */
-    public TravelBO searchForTravel(Travel travel){
+     */
+    public TravelBO searchForTravel(Travel travel) {
         homePagePO.clickAcceptTermsButton();
         switch (travel.typeOfTravel) {
             case Return:
                 searchForNewTravelReturn(travel);
-            break;
+                break;
             case Oneway:
                 searchForNewTravelOneWay(travel);
                 break;
@@ -34,14 +36,15 @@ public class TravelBO extends Validator {
 
     /**
      * Filter Travel with Return
+     *
      * @param travel
-     * */
-    public TravelBO searchForNewTravelReturn(Travel travel){
+     */
+    public TravelBO searchForNewTravelReturn(Travel travel) {
         travelFilterPO.inputOriginCity(travel.fromCity);
         travelFilterPO.inputDestinationCity(travel.toCity);
-        travelFilterPO.selectMonthCalendar(travel.fromMonth);
+        travelFilterPO.selectMonthCalendar(travel.fromMonth, TravelKind.Departure);
         travelFilterPO.selectDateDay(travel.fromDate);
-        travelFilterPO.selectMonthCalendar(travel.toMonth);
+        travelFilterPO.selectMonthCalendar(travel.toMonth, TravelKind.Return);
         travelFilterPO.selectDateDay(travel.toDate);
         travelFilterPO.clickSearchFlightButton();
         return this;
@@ -49,12 +52,13 @@ public class TravelBO extends Validator {
 
     /**
      * Filter Travel with One Way
+     *
      * @param travel
-     * */
-    public TravelBO searchForNewTravelOneWay(Travel travel){
+     */
+    public TravelBO searchForNewTravelOneWay(Travel travel) {
         travelFilterPO.inputOriginCity(travel.fromCity);
         travelFilterPO.inputDestinationCity(travel.toCity);
-        travelFilterPO.selectMonthCalendar(travel.fromMonth);
+        travelFilterPO.selectMonthCalendar(travel.fromMonth, TravelKind.Departure);
         travelFilterPO.selectDateDay(travel.fromDate);
         travelFilterPO.clickSearchFlightButton();
         return this;
@@ -62,16 +66,17 @@ public class TravelBO extends Validator {
 
     /**
      * Filter Travel with Multi Cities
+     *
      * @param travel
-     * */
-    public TravelBO searchForNewTravelMulti(Travel travel){
+     */
+    public TravelBO searchForNewTravelMulti(Travel travel) {
         travelFilterPO.inputOriginCity(travel.fromCity);
         travelFilterPO.inputDestinationCity(travel.toCity);
-        travelFilterPO.selectMonthCalendar(travel.fromMonth);
+        travelFilterPO.selectMonthCalendar(travel.fromMonth, TravelKind.Departure);
         travelFilterPO.selectDateDay(travel.fromDate);
         travelFilterPO.inputOriginCity(travel.multiFromCity);
         travelFilterPO.inputDestinationCity(travel.multiToCity);
-        travelFilterPO.selectMonthCalendar(travel.multiFromMonth);
+        travelFilterPO.selectMonthCalendar(travel.multiFromMonth, TravelKind.Departure);
         travelFilterPO.selectDateDay(travel.multiFromDate);
         travelFilterPO.clickSearchFlightButton();
         return this;

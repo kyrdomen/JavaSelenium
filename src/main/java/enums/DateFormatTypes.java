@@ -2,7 +2,7 @@ package enums;
 
 public enum DateFormatTypes {
     FULL_FORMAT("EEE MMM d yyyy"),
-    MONTH_FORMAT("MMM yyyy"),
+    MONTH_FORMAT("MMMM yyyy"),
 ;
 
     private String myOption;

@@ -2,6 +2,7 @@ package pageObjects;
 
 import common.Commands;
 import common.LocatorsUtilities;
+import enums.TravelKind;
 import org.openqa.selenium.By;
 
 public class TravelFilterPO extends Commands {
@@ -93,8 +94,16 @@ public class TravelFilterPO extends Commands {
      *
      * @return
      */
-    public TravelFilterPO openDepartureDateCalendar(){
-        pressAndWaitForElement(departureDateInput, dayPicker);
+    public TravelFilterPO openDateCalendar(TravelKind kind){
+        switch (kind) {
+            case Departure:
+                pressAndWaitForElement(departureDateInput, dayPicker);
+                break;
+            case Return:
+                pressAndWaitForElement(returnDateInput, dayPicker);
+                break;
+            default:
+        }
         return this;
     }
 
@@ -102,7 +111,8 @@ public class TravelFilterPO extends Commands {
      * Choose month in calendar - day picker
      * @return
      */
-    public TravelFilterPO selectMonthCalendar(String month){
+    public TravelFilterPO selectMonthCalendar(String month, TravelKind kind){
+        openDateCalendar(kind);
         while (!getText(calendarMonthText).equalsIgnoreCase(month)) {
             press(chooseMonthArrow);
         }
