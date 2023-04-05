@@ -1,11 +1,26 @@
 package pageObjects;
 
 import common.Commands;
+import common.LocatorsUtilities;
+import enums.NumberOfStops;
 import enums.Sliders;
 import enums.TravelKind;
 import org.openqa.selenium.By;
 
 public class TravelResultsFilterPO extends Commands {
+
+    enum Locators implements LocatorsUtilities {
+        airlineName("label[title=''{0}'']");
+        private final String myLocator;
+
+        Locators(String locator) {
+            myLocator = locator;
+        }
+
+        public String getLocator() {
+            return myLocator;
+        }
+    }
 
     private By filterToggleButton = By.cssSelector("button[data-testid='resultPage-toggleFiltersButton-button']");
     private By resetFiltersButton = By.cssSelector("button[data-testid='filtersForm-resetFilters-button']");
@@ -20,10 +35,13 @@ public class TravelResultsFilterPO extends Commands {
     //price
     private By priceSliderMin = By.cssSelector("div[data-testid='resultPage-PRICEFilter-content'] div[data-testid='handle-0']");
     private By priceSliderMax = By.cssSelector("div[data-testid='resultPage-PRICEFilter-content'] div[data-testid='handle-1']");
+    private By maxPriceValue = By.cssSelector("div.slider-tracks ~ div ~ div");
+    private By minPriceValue = By.cssSelector("div.slider-tracks ~ div");
 
     //airlines
     private By clearAllAirlines = By.cssSelector("div[data-testid='resultPage-AIRLINESFilter-content'] span:nth-child(1)");
     private By selectAllAirlines = By.cssSelector("div[data-testid='resultPage-AIRLINESFilter-content'] span:nth-child(2)");
+    private By inputAirline = By.cssSelector("input");
 
     //travel time
     private By travelTimeSlider = By.cssSelector("div[data-testid='resultPage-TRAVEL_TIMEFilter-content'] div[data-testid='handle-0']");
@@ -53,7 +71,7 @@ public class TravelResultsFilterPO extends Commands {
      * Reset Filters
      * @return
      */
-    public TravelResultsFilterPO resetFilters(){
+    public TravelResultsFilterPO resetFilters() {
         press(resetFiltersButton);
         return this;
     }
@@ -62,8 +80,68 @@ public class TravelResultsFilterPO extends Commands {
      * Apply Filters
      * @return
      */
-    public TravelResultsFilterPO applyFilters(){
+    public TravelResultsFilterPO applyFilters() {
         pressAndWaitForElementToDisappear(applyFiltersButton, filterScreen);
+        return this;
+    }
+
+    /***
+     * Get max Price from the filters ui
+     * @return
+     */
+    public double getMaxPrice() {
+        openFilterResults();
+        Double price = transformPriceTextToDouble(maxPriceValue);
+        applyFilters();
+        return price;
+    }
+
+    /***
+     * Transform Price text to double
+     * @return
+     */
+    public double transformPriceTextToDouble(By locator){
+        String texts = getText(locator).replaceAll("[^A-Za-z0-9()\\[\\]\\.]", "").replace("CA","");
+        return Double.parseDouble(texts);
+    }
+
+    /***
+     * Transform Price text to double
+     * @return
+     */
+    public double transformPriceTextToDouble(String originalText){
+        String texts = originalText.replaceAll("[^A-Za-z0-9()\\[\\]\\.]", "").replace("CA","");
+        return Double.parseDouble(texts);
+    }
+
+    /***
+     * Get min Price from the ui
+     * @return
+     */
+    public Double getMinPrice() {
+        openFilterResults();
+        Double price = transformPriceTextToDouble(minPriceValue);
+        applyFilters();
+        return price;
+    }
+
+    /***
+     * Select Stop Flight
+     * @return
+     */
+    public TravelResultsFilterPO selectFlightStops(NumberOfStops numberOfStops) {
+        switch (numberOfStops) {
+            case NonStopFlights:
+                selectNonStopFlight();
+                break;
+            case All:
+                selectAllStopsButton();
+                break;
+            case OneStop:
+                selectMaxOneStopButton();
+                break;
+            default:
+        }
         return this;
     }
 
@@ -133,30 +211,42 @@ public class TravelResultsFilterPO extends Commands {
 
     /**
      * Slide elements
+     *
      * @param slider
      * @param xOffset
      * @param yOffset
      * @return
      */
     public TravelResultsFilterPO slideFilters(Sliders slider, int xOffset, int yOffset) {
-        switch (slider) {
-            case minPrice:
-                slideElement(priceSliderMin, xOffset, yOffset);
-                break;
-            case maxPrice:
-                slideElement(priceSliderMax, xOffset, yOffset);
-                break;
-            case travelTime:
-                slideElement(travelTimeSlider, xOffset, yOffset);
-                break;
-            case fromDepartureMin:
-                slideElement(outSliderMin, xOffset, yOffset);
-                break;
-            case returnArrivalMax:
-                slideElement(inSliderMax, xOffset, yOffset);
-                break;
-            default:
-        }
+            switch (slider) {
+                case minPrice:
+                    slideElement(priceSliderMin, xOffset, yOffset);
+                    break;
+                case maxPrice:
+                    slideElement(priceSliderMax, xOffset, yOffset);
+                    break;
+                case travelTime:
+                    slideElement(travelTimeSlider, xOffset, yOffset);
+                    break;
+                case fromDepartureMin:
+                    slideElement(outSliderMin, xOffset, yOffset);
+                    break;
+                case returnArrivalMax:
+                    slideElement(inSliderMax, xOffset, yOffset);
+                    break;
+                default:
+            }
+        return this;
+    }
+
+    /**
+     * Select airline
+     *
+     * @param name
+     */
+    public TravelResultsFilterPO selectAirline(String name) {
+        clickClearAllAirlines();
+        pressWebElementRelativeLocator(inputAirline, Locators.airlineName.getWithParams(name));
         return this;
     }
 

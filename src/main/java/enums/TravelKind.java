@@ -6,7 +6,8 @@ public enum TravelKind {
     Multicity("Multi-city"),
     Inbound("Inbound"),
     Outbound("Outbound"),
-    Departure("Departure");
+    Departure("Departure"),
+    Arrival("Arrival");
 
     private String myOption;
 

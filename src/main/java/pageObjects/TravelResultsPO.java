@@ -27,7 +27,7 @@ public class TravelResultsPO extends Commands {
      * @return  string noOfFlights
      * */
     public String getNumberOfResults(){
-        return getText(resultsNoFlights).trim().replace(":", "");
+        return getText(resultsNoFlights).replace(":", "").replace("Flights", "").trim();
     }
 
     /**

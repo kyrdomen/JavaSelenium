@@ -1,8 +1,13 @@
 package dtos;
 
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
 public class QuickSortDetails {
-    public Integer Recommended = 200;
-    public Integer Promotion = 200;
-    public Integer Cheapest = 200;
-    public Integer Shortest = 200;
+    public Integer Recommended;
+    public Integer Promotion ;
+    public Integer Cheapest;
+    public Integer Shortest ;
 }

@@ -8,6 +8,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import static org.openqa.selenium.support.locators.RelativeLocator.with;
+
 
 import java.time.Duration;
 import java.util.List;
@@ -64,7 +66,7 @@ public class Commands {
      */
     public String getText(By locator) {
         waitForElement(locator);
-        return DriverFactory.getWebDriver().findElement(locator).getText();
+        return DriverFactory.getWebDriver().findElement(locator).getText().trim();
     }
 
     /**
@@ -284,5 +286,10 @@ public class Commands {
     public void slideElement(By locator, int xOffset, int yOffset) {
         WebElement slider = DriverFactory.getWebDriver().findElement(locator);
         getBuilder().dragAndDropBy(slider, xOffset, yOffset).perform();
+    }
+
+    public void pressWebElementRelativeLocator(By locator, By relativeLocator){
+        WebElement element = DriverFactory.getWebDriver().findElement(with(locator).near(relativeLocator));
+        element.click();
     }
 }

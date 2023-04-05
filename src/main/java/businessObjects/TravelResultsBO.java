@@ -1,7 +1,10 @@
 package businessObjects;
 
+import dtos.Filters;
+import enums.Sliders;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
+import pageObjects.TravelResultsFilterPO;
 import pageObjects.TravelResultsPO;
 import validator.Validator;
 
@@ -10,6 +13,30 @@ import java.util.Map;
 
 public class TravelResultsBO extends Validator {
     protected TravelResultsPO resultsPO = new TravelResultsPO();
+    protected TravelResultsFilterPO travelResultsFilterPO = new TravelResultsFilterPO();
+
+
+    /**
+     * Select filters
+     *
+     * @return
+     */
+    public TravelResultsBO filterResults (Filters filter){
+        travelResultsFilterPO.openFilterResults();
+        travelResultsFilterPO.selectFlightStops(filter.stops);
+        travelResultsFilterPO.slideFilters(Sliders.minPrice, filter.priceMin, 0);
+        travelResultsFilterPO.slideFilters(Sliders.maxPrice, filter.priceMax, 0);
+        travelResultsFilterPO.slideFilters(Sliders.travelTime, filter.travelTimeMax, 0);
+        travelResultsFilterPO.slideFilters(Sliders.fromDepartureMin, filter.fromMin, 0);
+        travelResultsFilterPO.slideFilters(Sliders.returnDepartureMin, filter.toMin, 0);
+        travelResultsFilterPO.selectAirline(filter.airline);
+        travelResultsFilterPO.applyFilters();
+        return this;
+    }
+
+
+
+    ///////////////////////////////////// Verifications ///////////////////////////////
 
     /**
      * Verify number of flights
@@ -49,17 +76,31 @@ public class TravelResultsBO extends Validator {
 
     /**
      * Verify minimum cost
-     *
-     * @param cost
-     * @return
+     ** @return
      */
-    public TravelResultsBO verifyMinimumFlightCost(Integer cost) {
+    public TravelResultsBO verifyMinimumFlightCost() {
         initSoftAssertions();
         List<WebElement> rows = resultsPO.getStandardPriceRows();
+        Double expectedCost = travelResultsFilterPO.getMinPrice();
         for (int i = 0; i < rows.size(); i++) {
-            String[] texts = rows.get(i).getText().replaceAll("\\W", "").trim().split(".");
-            Integer price = Integer.valueOf(texts[0]);
-            Assert.assertTrue(price > cost, "TableRow: " + i + " Has Expected:" + cost + "BUT found: " + price);
+            Double price = travelResultsFilterPO.transformPriceTextToDouble(rows.get(i).getText());
+            Assert.assertTrue(price > expectedCost, "TableRow: " + i + " Has Expected:" + expectedCost + "BUT found: " + price);
+        }
+        return this;
+    }
+
+
+    /**
+     * Verify MAXIMUM cost
+     ** @return
+     */
+    public TravelResultsBO verifyMaximumflightCost() {
+        initSoftAssertions();
+        List<WebElement> rows = resultsPO.getStandardPriceRows();
+        Double expectedCost = travelResultsFilterPO.getMaxPrice();
+        for (int i = 0; i < rows.size(); i++) {
+            Double price = travelResultsFilterPO.transformPriceTextToDouble(rows.get(i).getText());
+            Assert.assertTrue(price < expectedCost, "TableRow: " + i + " Has Expected:" + expectedCost + "BUT found: " + price);
         }
         return this;
     }
