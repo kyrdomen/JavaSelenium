@@ -6,12 +6,10 @@
     <parameter name="timeout" value="20"/>
 
 
-    <test name="Flight Results Filters">
-        <classes>
-            <class name="tests.TC01_VerifyFilters"/>
-        </classes>
-    </test>
-
+    <suite-files>
+        <suite-file path="testng1.xml"/>
+        <suite-file path="testng2.xml"/>
+    </suite-files>
 
 
 </suite>
